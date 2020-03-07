@@ -34,6 +34,7 @@ extension Promise where T: Encodable {
     func flutter(_ result: @escaping FlutterResult) {
         self.done {
             let encoder = JSONEncoder()
+
             result(String(data: try! encoder.encode([$0]).dropFirst().dropLast(), encoding: .utf8)!)
         }.catch {
             if let err = $0 as? JSError {
@@ -75,12 +76,12 @@ public class SwiftFlutterMarionettePlugin: NSObject, FlutterPlugin {
                     case .window(let window): window.addSubview(page.webView)
                 }
                 #endif
-
-                SwiftFlutterMarionettePlugin.pages[id] = page
+   SwiftFlutterMarionettePlugin.pages[id] = page
                 result(id)
             case "dispose":
                 let id = (call.arguments as! Dictionary<String, AnyObject>)["id"] as! String
                 SwiftFlutterMarionettePlugin.pages[id]!.webView.removeFromSuperview()
+
                 SwiftFlutterMarionettePlugin.pages.removeValue(forKey: id)
             case "click":
                 let id = (call.arguments as! Dictionary<String, AnyObject>)["id"] as! String
@@ -105,6 +106,7 @@ public class SwiftFlutterMarionettePlugin: NSObject, FlutterPlugin {
                 SwiftFlutterMarionettePlugin.pages[id]!.type(selector, text).flutter(result)
             case "reload":
                 let id = (call.arguments as! Dictionary<String, AnyObject>)["id"] as! String
+               
                 SwiftFlutterMarionettePlugin.pages[id]!.reload().flutter(result)
             case "waitForFunction":
                 let id = (call.arguments as! Dictionary<String, AnyObject>)["id"] as! String
@@ -112,10 +114,13 @@ public class SwiftFlutterMarionettePlugin: NSObject, FlutterPlugin {
                 SwiftFlutterMarionettePlugin.pages[id]!.waitForFunction(fn).flutter(result)
             case "waitForNavigation":
                 let id = (call.arguments as! Dictionary<String, AnyObject>)["id"] as! String
+              
+
                 SwiftFlutterMarionettePlugin.pages[id]!.waitForNavigation().flutter(result)
             case "waitForSelector":
                 let id = (call.arguments as! Dictionary<String, AnyObject>)["id"] as! String
                 let selector = (call.arguments as! Dictionary<String, AnyObject>)["selector"] as! String
+              
                 SwiftFlutterMarionettePlugin.pages[id]!.waitForSelector(selector).flutter(result)
             default:
                 result(FlutterMethodNotImplemented)
